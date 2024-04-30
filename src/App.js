@@ -1,28 +1,17 @@
-import { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
 
-// Components
-import Navigation from './components/Navigation'
-import Sort from './components/Sort'
-import Card from './components/Card'
-import SeatChart from './components/SeatChart'
-
-// ABIs
-import TokenMaster from './abis/TokenMaster.json'
-
-// Config
-import config from './config.json'
+import { BrowserRouter as Router } from "react-router-dom";
+import Auth0ProviderWithNavigate from './auth/Auth0ProviderWithNavigate'
+import { AppRoutes } from './AppRoutes'
 
 function App() {
 
   return (
-    <div>
-      <header>
-
-        <h2 className="header__title"><strong>Welcome to Tokenmaster</strong></h2>
-      </header>
-
-    </div>
+    <Router>
+      <Auth0ProviderWithNavigate>
+      <AppRoutes/>
+      {/* <Toaster visibleToasts={1} position='top-right' richColors /> */}
+      </Auth0ProviderWithNavigate>
+    </Router>
   );
 }
 
