@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Import Components
 import Seat from './Seat'
 
 // Import Assets
 import close from '../assets/close.svg'
-import { DialogBox } from './DialogBox'
 import { useAuth0 } from '@auth0/auth0-react'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
+import QRCode from 'react-qr-code'
 
 const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
-  const [user]=useAuth0();
+  const {user}=useAuth0();
   const ticketData={
     username: user.name,
     emailID: user.email,
@@ -19,7 +20,10 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
   const [seatsTaken, setSeatsTaken] = useState(false)
   const [hasSold, setHasSold] = useState(false)
   const [generateQR,setgenerateQR] = useState(false);
-
+  const seatNumber=useRef(-1);
+  const handleClose=()=>{
+    setgenerateQR(false);
+  }
   const getSeatsTaken = async () => {
     const seatsTaken = await tokenMaster.getSeatsTaken(occasion.id)
     setSeatsTaken(seatsTaken)
@@ -27,14 +31,14 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
 
   const buyHandler = async (_seat) => {
     setHasSold(false)
-
+    seatNumber.current=_seat
     const signer = await provider.getSigner()
     const transaction = await tokenMaster.connect(signer).mint(occasion.id, _seat, { value: occasion.cost })
     await transaction.wait()
     ticketData.seatNumber=_seat;
     ticketData.occasionID=occasion.id;
     setHasSold(true)
-    setgenerateQR(true)
+    setgenerateQR(true);
   }
 
   useEffect(() => {
@@ -104,7 +108,19 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
           />
         )}
       </div>
-      {generateQR && <DialogBox isOpen={generateQR} handleClose={()=>{setgenerateQR(false)}} ticketData={ticketData}/>}
+      {generateQR && <Dialog open={generateQR} onClose={()=>{
+        setgenerateQR(false);
+      }}>
+        <DialogTitle >Please get your ticket below</DialogTitle>
+        <DialogContent>
+          <QRCode value={"Name- "+ user.name + " \nEmail "+ user.email  + "\nOcassion ID- " +occasion.id.toString()+" \nSeat Number "+ seatNumber.current.toString()}/>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>{
+            setgenerateQR(false)
+          }}>Close</Button>
+        </DialogActions>
+        </Dialog>}
     </div >
   );
 }

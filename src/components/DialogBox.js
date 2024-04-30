@@ -3,7 +3,9 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import QRCode from 'react-qr-code';
 
-export const DialogBox=(isOpen,handleClose,ticketData="ayush")=>{
+export const DialogBox=(isOpen,handleClose,ticketData)=>{
+    console.log(ticketData);
+    console.log(handleClose);
     return(
         <div>
             <Dialog open={isOpen} onClose={handleClose}>
@@ -12,7 +14,7 @@ export const DialogBox=(isOpen,handleClose,ticketData="ayush")=>{
                <QRCode value={ticketData}/>
                </DialogContent>
                <DialogActions>
-                <Button onClick={handleClose}>Close</Button>
+                <Button onClick={handleClose()}>Close</Button>
                </DialogActions>
             </Dialog>
         </div>
