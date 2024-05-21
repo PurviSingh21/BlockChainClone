@@ -10,8 +10,10 @@ const Navigation = ({ account, setAccount }) => {
   return (
     <nav>
       <div className='nav__brand'>
-        <h1>tokenmaster</h1>
-
+        <div style={{fontWeight: "bold"}}>
+        <h1 >ELYSIUM GATE</h1>
+        </div>
+       
         <input className='nav__search' type="text" placeholder='Find millions of experiences' />
 
         <ul className='nav__links'>
@@ -39,7 +41,7 @@ const Navigation = ({ account, setAccount }) => {
         </button>
       )}
     </nav>
-  );
+  )
 }
 
 export default Navigation;
