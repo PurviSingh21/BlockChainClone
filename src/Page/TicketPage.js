@@ -13,7 +13,7 @@ import TokenMaster from '../abis/TokenMaster.json'
 // Config
 import config from '../config.json'
 export const TicketPage=()=>{
-
+    const [seats,setSeats]=useState([]);
     const [provider, setProvider] = useState(null)
     const [account, setAccount] = useState(null)
   
@@ -85,6 +85,8 @@ export const TicketPage=()=>{
           tokenMaster={tokenMaster}
           provider={provider}
           setToggle={setToggle}
+          seats={seats}
+          setSeats={setSeats}
         />
       )}
     </div>

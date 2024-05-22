@@ -9,7 +9,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import QRCode from 'react-qr-code'
 
-const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
+const SeatChart = ({ occasion, tokenMaster, provider, setToggle,seats,setSeats }) => {
   const {user}=useAuth0();
   const ticketData={
     username: user.name,
@@ -28,15 +28,20 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
     const seatsTaken = await tokenMaster.getSeatsTaken(occasion.id)
     setSeatsTaken(seatsTaken)
   }
-
-  const buyHandler = async (_seat) => {
-    setHasSold(false)
+  const buySeats= async (_seat)=>{
     seatNumber.current=_seat
     const signer = await provider.getSigner()
     const transaction = await tokenMaster.connect(signer).mint(occasion.id, _seat, { value: occasion.cost })
     await transaction.wait()
     ticketData.seatNumber=_seat;
     ticketData.occasionID=occasion.id;
+  }
+  const buyHandler = async (_seats) => {
+    setHasSold(false)
+    for(let seat in _seats)
+    {
+      buySeats(seat);
+    }
     setHasSold(true)
     setgenerateQR(true);
   }
@@ -69,6 +74,8 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
             seatsTaken={seatsTaken}
             buyHandler={buyHandler}
             key={i}
+            seats={seats}
+            setSeats={setSeats}
           />
         )}
 
@@ -108,6 +115,7 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
           />
         )}
       </div>
+      <Button disabled={!!seats.length} onClick={()=>buyHandler(seats)}>Buy Now</Button>
       {generateQR && <Dialog open={generateQR} onClose={()=>{
         setgenerateQR(false);
       }}>
